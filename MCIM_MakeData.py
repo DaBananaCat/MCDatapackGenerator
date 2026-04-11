@@ -6,8 +6,10 @@ import pprint
 import shutil
 
 vanilla_folder = "1.21.11/"
-output_folder = "datapack/"
+datpack_folder = "C:/Users/" + os.getlogin() + "/AppData/Roaming/ModrinthApp/profiles/Main/datapacks/Food"
+resourcepack_folder = "C:/Users/" + os.getlogin() + "/AppData/Roaming/ModrinthApp/profiles/Main/resourcepacks/Food"
 namespace = "food"
+
 
 models_modded = {}
 
@@ -22,7 +24,7 @@ class Item():
         self.texture = texture
         self.base_item = item_to_replace
 
-        write_json("resourcepack/assets/" + namespace + "/item/" + id + ".json", 
+        write_json(resourcepack_folder + "/assets/" + namespace + "/item/" + id + ".json", 
                    {
             "model": {
             "type": "minecraft:model",
@@ -30,7 +32,7 @@ class Item():
             }
         })
 
-        write_json("resourcepack/assets/" + namespace + "/models/item/" + id + ".json", {
+        write_json(resourcepack_folder + "/assets/" + namespace + "/models/item/" + id + ".json", {
             "parent": "minecraft:item/generated",
             "textures": {
                 "layer0": namespace + ":item/" + id
@@ -69,9 +71,9 @@ class Item():
         else:
             print("new model is:")
             pprint.pp(model)
-        write_json("resourcepack/assets/minecraft/items/" + item_to_replace[10:] + ".json", model)
+        write_json(resourcepack_folder + "/assets/minecraft/items/" + item_to_replace[10:] + ".json", model)
 
-        duplicate("assets/"+texture, "resourcepack/assets/" + namespace + "/textures/item/" + texture)
+        duplicate("assets/"+texture, resourcepack_folder + "/assets/" + namespace + "/textures/item/" + texture)
 
 def duplicate(source_path, destination_path):
     shutil.copy2(source_path, destination_path)
@@ -144,7 +146,7 @@ def modify_loot_tables(loot_tables, item_components):
 
 def make_recipe(name: str, type: str, result: Item, result_amount: int, ingredients: list, pattern=[], category:str = "misc", group:str = None):
     recipe = {}
-    path = output_folder + "data/" + namespace + "/recipe/" + name + ".json"
+    path = datpack_folder + "/data/" + namespace + "/recipe/" + name + ".json"
     if type == "shapeless":
         recipe["type"] = "minecraft:crafting_shapeless"
         recipe["ingredients"] = ingredients
@@ -166,7 +168,7 @@ def make_recipe(name: str, type: str, result: Item, result_amount: int, ingredie
 
 
 def new_item(id, components, recipes):
-    path = output_folder + "/data/" + namespace + "/"
+    path = datpack_folder + "/data/" + namespace + "/"
 
     for name, data in recipes:
         write_json(path + "recipe/"+name+".json", data)

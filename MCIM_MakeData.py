@@ -9,7 +9,7 @@ import shutil
 vanilla_folder = "1.21.11/"
 
 # Replace with the location you want the datapack and resourcepack to output
-# You may want to have them in their respective folders for easier testing
+# You may want to have them in their respective folders like shown for easier testing
 datpack_folder = "C:/Users/" + os.getlogin() + "/AppData/Roaming/ModrinthApp/profiles/Main/datapacks/Food"
 resourcepack_folder = "C:/Users/" + os.getlogin() + "/AppData/Roaming/ModrinthApp/profiles/Main/resourcepacks/Food"
 
@@ -56,15 +56,15 @@ class Item():
             }
         })
 
+        
         # If this model has not been touched yet, mark it as modified
         if item_to_replace not in models_modded:
             model = read_json(vanilla_folder + "/assets/minecraft/items/" + item_to_replace[10:] +".json")
             models_modded[item_to_replace] = model
-
-        # If this model has been modified, append changes instead of replacing
+        # If this model has been modified before, append changes instead of replacing
         else:
             model = models_modded[item_to_replace]
-            pprint.pp(model)
+            print(f"Tried to add a model for {id}, but it has already been touched, appending instead")
         if model["model"]["type"] == "minecraft:model":
             model = {"model": {
                 "type": "select",
@@ -86,7 +86,10 @@ class Item():
                         "model": "food:item/" + id
                     }
                 })
-            
+        
+        # Write the now changed model to the list of modified models
+        models_modded[item_to_replace] = model
+        
         write_json(resourcepack_folder + "/assets/minecraft/items/" + item_to_replace[10:] + ".json", model)
 
         # Put the specified item's texture into the resourcepack
@@ -174,6 +177,7 @@ def write_mcfunction(path, contents):
         else:
             f.write(contents)
 
+# Creates a give command with the provided components
 def data_to_command(item, components):
     result = "give @s " + item + "["
     for key,val in components.items():
